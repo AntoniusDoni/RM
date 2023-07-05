@@ -8,12 +8,11 @@ import { useModalState } from "@/hooks";
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import Pagination from "@/Components/Pagination";
-import ModalConfirm from "@/Components/ModalConfirm";
-import FormModal from "./FormModalPeminjaman";
+import FormModal from "./FormModalPengembalian";
 import SearchInput from "@/Components/SearchInput";
 import { hasPermission } from "@/utils";
 
-export default function Peminjaman(props) {
+export default function Pengembalian(props) {
 
     const {
         query: { links, data },
@@ -26,20 +25,12 @@ export default function Peminjaman(props) {
     const confirmModal = useModalState();
     const formModal = useModalState();
 
-    const toggleFormModal = (peminjaman = null) => {
-        formModal.setData(peminjaman);
+    const toggleFormModal = (pengembalian = null) => {
+        formModal.setData(pengembalian);
         formModal.toggle();
     };
-    const handleDeleteClick = (peminjaman) => {
-        confirmModal.setData(peminjaman);
-        confirmModal.toggle();
-    };
 
-    const onDelete = () => {
-        if (confirmModal.data !== null) {
-            router.delete(route("peminjaman.destroy", confirmModal.data.id));
-        }
-    };
+
     const params = { q: search };
     useEffect(() => {
         if (preValue) {
@@ -65,9 +56,9 @@ export default function Peminjaman(props) {
             errors={props.errors}
             flash={props.flash}
             page={"Dashboard"}
-            action={"Peminjaman Berkas RM"}
+            action={"Pengembalian Berkas RM"}
         >
-            <Head title="Peminjaman Berkas RM" />
+            <Head title="Pengembalian Berkas RM" />
             <div>
                 <div className="mx-auto sm:px-6 lg:px-8 ">
                     <div className="p-6 overflow-hidden shadow-sm sm:rounded-lg bg-gray-200 dark:bg-gray-800 space-y-4">
@@ -114,7 +105,7 @@ export default function Peminjaman(props) {
                                                 scope="col"
                                                 className="py-3 px-6"
                                             >
-                                                Kode peminjaman
+                                                Kode Petugas
                                             </th>
                                             <th
                                                 scope="col"
@@ -184,27 +175,12 @@ export default function Peminjaman(props) {
                                                                 <div className="flex space-x-1 items-center">
                                                                     <HiPencil />
                                                                     <div>
-                                                                        Ubah
+                                                                        Pengembalian Berkas
                                                                     </div>
                                                                 </div>
                                                             </Dropdown.Item>
                                                         )}
-                                                        {canDelete && (
-                                                            <Dropdown.Item
-                                                                onClick={() =>
-                                                                    handleDeleteClick(
-                                                                        peminjam
-                                                                    )
-                                                                }
-                                                            >
-                                                                <div className="flex space-x-1 items-center">
-                                                                    <HiTrash />
-                                                                    <div>
-                                                                        Hapus
-                                                                    </div>
-                                                                </div>
-                                                            </Dropdown.Item>
-                                                        )}
+
                                                     </Dropdown>
                                                 </td>
                                                 </tr>
@@ -221,7 +197,7 @@ export default function Peminjaman(props) {
                     </div>
                 </div>
             </div>
-            <ModalConfirm modalState={confirmModal} onConfirm={onDelete} />
+
             <FormModal modalState={formModal} />
         </AuthenticatedLayout>
     );

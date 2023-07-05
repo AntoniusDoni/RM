@@ -16,8 +16,8 @@ return new class extends Migration
             $table->uuid('kd_petugas_pinjam');
             $table->uuid('pasiens_id');
             $table->date('tgl_pinjam');
-            $table->uuid('kd_petugas_kembali');
-            $table->date('tanggal_kembali');
+            $table->uuid('kd_petugas_kembali')->nullable();
+            $table->date('tanggal_kembali')->nullable();
             $table->timestamps();
             $table->softDeletes();
             $table->ulid('created_by')->nullable();

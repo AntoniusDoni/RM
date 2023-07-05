@@ -66,7 +66,7 @@ class PasienController extends Controller
             'alamat'=>$request->alamat,
             'phone'=> $request->phone,
             'jk'=>$request->jk,
-            'tgl_lahir'=> $request->tgl_lahir,
+            'tgl_lahir'=> date('Y-m-d', strtotime($request->tgl_lahir)),
         ]);
 
 

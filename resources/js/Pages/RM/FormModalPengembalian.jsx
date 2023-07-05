@@ -7,6 +7,7 @@ import SelectInputPasien from "../Pasien/SelectionInput";
 import SelectInputPetugas from "../Petugas/SelectionInput";
 import { isEmpty } from "lodash";
 import FormInputDate from "@/Components/FormInputDate";
+import FormInput from "@/Components/FormInput";
 
 export default function FormModalPeminjaman(props) {
     const { modalState } = props;
@@ -16,7 +17,8 @@ export default function FormModalPeminjaman(props) {
             kode_peminjaman: null,
             kode_ruang: null,
             tgl_pinjam: new Date(),
-            is_back:false,
+            tgl_kembali:new Date
+
         });
 
     const handleOnChange = (event) => {
@@ -44,20 +46,19 @@ export default function FormModalPeminjaman(props) {
     const handleSubmit = () => {
         const peminjaman = modalState.data;
         if (peminjaman !== null) {
-            put(route("peminjaman.update", peminjaman), {
+            put(route("pengembalian.store", peminjaman), {
                 onSuccess: () => handleClose(),
             });
             return;
         }
-        post(route("peminjaman.store"), {
-            onSuccess: () => handleClose(),
-        });
+        // post(route("peminjaman.store"), {
+        //     onSuccess: () => handleClose(),
+        // });
     };
 
     useEffect(() => {
         const peminjaman = modalState.data;
         if (isEmpty(peminjaman) === false) {
-            console.log(peminjaman);
             setData({
                 no_rm: peminjaman?.pasien.id,
                 kode_peminjaman: peminjaman?.petugas_pinjam.id,
@@ -79,6 +80,7 @@ export default function FormModalPeminjaman(props) {
                 itemSelected={data.no_rm}
                 onItemSelected={(id) => setData("no_rm", id)}
                 error={errors.no_rm}
+                disabled={true}
             />
             <SelectInputRuang
                 label="Ruang"
@@ -87,19 +89,26 @@ export default function FormModalPeminjaman(props) {
                 error={errors.kode_ruang}
             />
             <SelectInputPetugas
-                label="Petugas"
+                label="Petugas Pengembali"
                 itemSelected={data.kode_peminjaman}
                 onItemSelected={(id) => setData("kode_peminjaman", id)}
                 error={errors.kode_peminjaman}
                 disabled={data.kode_ruang==null?true:false}
                 kode_ruang={data.kode_ruang}
             />
-            <FormInputDate
-                name="tgl_pinjam"
-                selected={data.tgl_pinjam}
-                onChange={(date) => setData("tgl_pinjam", date)}
-                label="Tanggal Pinjam"
+            <FormInput
+                name="nama"
+                value={data.tgl_pinjam}
+                disabled={true}
+                label="Nama"
                 error={errors.tgl_pinjam}
+            />
+            <FormInputDate
+            name="tgl_kembali"
+            selected={data.tgl_kembali}
+            onChange={(date) => setData("tgl_kembali", date)}
+            label="Tanggal Kembali"
+            error={errors.tgl_kembali}
             />
 
             <div className="flex items-center">

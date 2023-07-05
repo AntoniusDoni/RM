@@ -8,6 +8,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\RuangController;
 use App\Http\Controllers\UserController;
+use App\Models\Peminjaman;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -54,9 +55,12 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/petugas/{petugas}', [PetugasController::class, 'destroy'])->name('petugas.destroy');
     //Peminjaman
     Route::get('/peminjaman', [PeminjamanController::class, 'index'])->name('peminjaman.index');
-    Route::post('/peminjaman', [PeminjamanController::class, 'store'])->name('petugas.store');
+    Route::post('/peminjaman', [PeminjamanController::class, 'store'])->name('peminjaman.store');
+    Route::put('/peminjaman/{peminjam}', [PeminjamanController::class, 'update'])->name('peminjaman.update');
+    Route::delete('/peminjaman/{peminjam}', [PeminjamanController::class, 'destroy'])->name('peminjaman.destroy');
     //Pengembalian
-    Route::get('/pengembalian', [PeminjamanController::class, 'index'])->name('pengembalian.index');
+    Route::get('/pengembalian', [PeminjamanController::class, 'pengembalian'])->name('pengembalian.index');
+    Route::put('/pengembalian/peminjam', [PeminjamanController::class, 'pengembalianberkas'])->name('pengembalian.store');
     //Riwayat
     Route::get('/riwayat', [PeminjamanController::class, 'index'])->name('riwayat.index');
 });

@@ -14,7 +14,7 @@ class Peminjaman extends Model
     ];
     protected $table='peminjaman';
     public function pasien(){
-        return $this->hasMany(Pasien::class,'pasiens_id');
+        return $this->belongsTo(Pasien::class,'pasiens_id');
     }
     public function petugasPinjam(){
         return $this->belongsTo(Petugas::class,'kd_petugas_pinjam');
