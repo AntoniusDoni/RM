@@ -63,15 +63,8 @@ export default function Pengembalian(props) {
                 <div className="mx-auto sm:px-6 lg:px-8 ">
                     <div className="p-6 overflow-hidden shadow-sm sm:rounded-lg bg-gray-200 dark:bg-gray-800 space-y-4">
                         <div className="flex justify-between">
-                            {canCreate && (
-                                <Button
-                                    size="sm"
-                                    onClick={() => toggleFormModal()}
-                                >
-                                    Tambah
-                                </Button>
-                            )}
-                            <div className="flex items-center">
+
+                            <div className="flex items-end">
                                 <SearchInput
                                     onChange={(e) => setSearch(e.target.value)}
                                     value={search}
