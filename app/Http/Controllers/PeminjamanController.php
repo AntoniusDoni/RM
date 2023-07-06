@@ -21,7 +21,19 @@ class PeminjamanController extends Controller
             'query' => $query->paginate(10),
         ]);
     }
-    public function pengembalian()
+    public function history(Request $request){
+        $query = Peminjaman::query()->with(['pasien', 'petugasPinjam', 'petugasPinjam.ruang','petugasKembali'])
+            ->whereNotNull('tgl_pinjam')->whereNotNull('tanggal_kembali')->orderBy('tgl_pinjam', 'DESC');
+            if ($request->q) {
+                $query->whereHas('pasien', function ($query) use ($request) {
+                    $query->where('nama', 'like', "%$request->q%")->orWhere('no_rm','=',$request->q);
+                });
+            }
+        return inertia('RM/History', [
+            'query' => $query->paginate(10),
+        ]);
+    }
+    public function pengembalian(Request $request)
     {
         $query = Peminjaman::query()->with(['pasien', 'petugasPinjam', 'petugasPinjam.ruang'])
             ->whereNotNull('tgl_pinjam')->whereNull('tanggal_kembali')->orderBy('tgl_pinjam', 'DESC');
@@ -59,14 +71,14 @@ class PeminjamanController extends Controller
             'kode_peminjaman' => 'required|exists:petugas,id',
             'tgl_kembali' => 'required|date',
         ]);
+
         $peminjam->fill([
             'kd_petugas_kembali' => $request->kode_peminjaman,
-            'pasiens_id' => $request->no_rm,
-            'tanggal_kembali' => date('Y-m-d', strtotime($request->tgl_pinjam)),
+            'tanggal_kembali' => date('Y-m-d', strtotime($request->tgl_kembali)),
         ]);
         $peminjam->save();
 
-        return redirect()->route('peminjaman.index')
+        return redirect()->route('pengembalian.index')
             ->with('message', ['type' => 'success', 'message' => 'Item has beed updated']);
     }
     public function update(Request $request, Peminjaman $peminjam)

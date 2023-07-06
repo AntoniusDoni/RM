@@ -44,9 +44,10 @@ export default function FormModalPeminjaman(props) {
     };
 
     const handleSubmit = () => {
-        const peminjaman = modalState.data;
-        if (peminjaman !== null) {
-            put(route("pengembalian.store", peminjaman), {
+        const peminjam = modalState.data;
+        if (peminjam !== null) {
+
+            put(route("pengembalian.update", peminjam), {
                 onSuccess: () => handleClose(),
             });
             return;

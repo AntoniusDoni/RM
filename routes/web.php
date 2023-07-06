@@ -60,9 +60,9 @@ Route::middleware(['auth'])->group(function () {
     Route::delete('/peminjaman/{peminjam}', [PeminjamanController::class, 'destroy'])->name('peminjaman.destroy');
     //Pengembalian
     Route::get('/pengembalian', [PeminjamanController::class, 'pengembalian'])->name('pengembalian.index');
-    Route::put('/pengembalian/peminjam', [PeminjamanController::class, 'pengembalianberkas'])->name('pengembalian.store');
+    Route::put('/pengembalian/{peminjam}', [PeminjamanController::class, 'pengembalianberkas'])->name('pengembalian.update');
     //Riwayat
-    Route::get('/riwayat', [PeminjamanController::class, 'index'])->name('riwayat.index');
+    Route::get('/riwayat', [PeminjamanController::class, 'history'])->name('riwayat.index');
 });
 
 Route::middleware('auth')->group(function () {
