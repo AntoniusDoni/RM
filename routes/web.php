@@ -58,6 +58,7 @@ Route::middleware(['auth'])->group(function () {
     Route::post('/peminjaman', [PeminjamanController::class, 'store'])->name('peminjaman.store');
     Route::put('/peminjaman/{peminjam}', [PeminjamanController::class, 'update'])->name('peminjaman.update');
     Route::delete('/peminjaman/{peminjam}', [PeminjamanController::class, 'destroy'])->name('peminjaman.destroy');
+    Route::get('/peminjaman/exports', [PeminjamanController::class, 'exportpdf'])->name('peminjaman.export');
     //Pengembalian
     Route::get('/pengembalian', [PeminjamanController::class, 'pengembalian'])->name('pengembalian.index');
     Route::put('/pengembalian/{peminjam}', [PeminjamanController::class, 'pengembalianberkas'])->name('pengembalian.update');

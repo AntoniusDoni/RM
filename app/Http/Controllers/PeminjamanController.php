@@ -3,8 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Peminjaman;
+use Barryvdh\DomPDF\Facade\Pdf as PDF;
 use Illuminate\Http\Request;
-
 use function PHPUnit\Framework\isEmpty;
 
 class PeminjamanController extends Controller
@@ -14,21 +14,28 @@ class PeminjamanController extends Controller
     {
         $query = Peminjaman::query()->with(['pasien', 'petugasPinjam', 'petugasPinjam.ruang'])
             ->whereNull('tanggal_kembali')->orderBy('tgl_pinjam', 'DESC');
-        if ($request->q) {
-            // $query->where('nama', 'like', "%{$request->q}%")->orWhere('kode_petugas','=',$request->q);
+        if ($request->datestart && $request->dateend) {
+            $query->whereBetween('tgl_pinjam', [$request->datestart, $request->dateend]);
         }
+        if ($request->q) {
+            $query->whereHas('petugasPinjam', function ($query) use ($request) {
+                $query->where('nama', 'like', "%{$request->q}%")->orWhere('kode_petugas', '=', $request->q);
+            });
+        }
+
         return inertia('RM/Peminjaman', [
             'query' => $query->paginate(10),
         ]);
     }
-    public function history(Request $request){
-        $query = Peminjaman::query()->with(['pasien', 'petugasPinjam', 'petugasPinjam.ruang','petugasKembali'])
+    public function history(Request $request)
+    {
+        $query = Peminjaman::query()->with(['pasien', 'petugasPinjam', 'petugasPinjam.ruang', 'petugasKembali'])
             ->whereNotNull('tgl_pinjam')->whereNotNull('tanggal_kembali')->orderBy('tgl_pinjam', 'DESC');
-            if ($request->q) {
-                $query->whereHas('pasien', function ($query) use ($request) {
-                    $query->where('nama', 'like', "%$request->q%")->orWhere('no_rm','=',$request->q);
-                });
-            }
+        if ($request->q) {
+            $query->whereHas('pasien', function ($query) use ($request) {
+                $query->where('nama', 'like', "%$request->q%")->orWhere('no_rm', '=', $request->q);
+            });
+        }
         return inertia('RM/History', [
             'query' => $query->paginate(10),
         ]);
@@ -64,7 +71,8 @@ class PeminjamanController extends Controller
             session()->flash('message', ['type' => 'Failed', 'message' => 'Berkas Masih Dalam Proses Peminjaman Oleh Ruangan ' . $load?->petugasPinjam->ruang?->nama . " Petugas Peminjam " . $load->petugasPinjam->nama]);
         }
     }
-    public function pengembalianberkas(Request $request, Peminjaman $peminjam) {
+    public function pengembalianberkas(Request $request, Peminjaman $peminjam)
+    {
         $request->validate([
             'kode_ruang' => 'required|exists:ruangans,id',
             'no_rm' => 'required|exists:pasiens,id',
@@ -105,5 +113,30 @@ class PeminjamanController extends Controller
         $peminjam->delete();
         return redirect()->route('peminjaman.index')
             ->with('message', ['type' => 'success', 'message' => 'Item has beed deleted']);
+    }
+    public function exportpdf(Request $request)
+    {
+        $query = Peminjaman::query()->with(['pasien', 'petugasPinjam', 'petugasPinjam.ruang','creator'])
+            ->whereNull('tanggal_kembali')->orderBy('tgl_pinjam', 'DESC');
+        if ($request->datestart && $request->dateend) {
+            $query->whereBetween('tgl_pinjam', [$request->datestart, $request->dateend]);
+        }
+        if ($request->q) {
+            $query->whereHas('petugasPinjam', function ($query) use ($request) {
+                $query->where('nama', 'like', "%{$request->q}%")->orWhere('kode_petugas', '=', $request->q);
+            });
+        }
+        dd($query->get());
+        $curdate = date('d M Y');
+        $data = [
+            'title' => 'Laporan Berkas Rekam Medis ',
+            'date' => $curdate,
+            'datas' => $query->get(),
+            'datestart'=>$request->datestart,
+            'dateend'=>$request->dateend,
+        ];
+        $pdf=PDF::loadView('myPDF',$data);
+
+        return $pdf->download('Laporan Peminjaman Berkas Rekam Medis per tanggal '.$curdate.'.pdf');
     }
 }
