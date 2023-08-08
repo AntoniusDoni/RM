@@ -10,7 +10,10 @@ import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout";
 import Pagination from "@/Components/Pagination";
 import FormModal from "./FormModalPengembalian";
 import SearchInput from "@/Components/SearchInput";
-import { hasPermission } from "@/utils";
+
+import { dateToStringDB, hasPermission } from "@/utils";
+import FormInputDate from "@/Components/FormInputDate";
+import moment from "moment";
 
 export default function Pengembalian(props) {
 
@@ -18,10 +21,11 @@ export default function Pengembalian(props) {
         query: { links, data },
         auth,
     } = props;
-
+    const curdate = moment().format("DD-MM-YYYY");
     const [search, setSearch] = useState("");
     const preValue = usePrevious(search);
-
+    const [dateStart, setDateStart] = useState("");
+    const [dateEnd, setDateEnd] = useState("");
     const confirmModal = useModalState();
     const formModal = useModalState();
 
@@ -29,9 +33,25 @@ export default function Pengembalian(props) {
         formModal.setData(pengembalian);
         formModal.toggle();
     };
-
+    const searchDate = () => {
+        router.get(
+            route(route().current()),
+            {
+                q: search,
+                datestart: dateToStringDB(dateStart),
+                dateend: dateToStringDB(dateEnd),
+            },
+            {
+                replace: true,
+                preserveState: true,
+            }
+        );
+    };
 
     const params = { q: search };
+    const paramsdate = { q: search , 
+        datestart:dateStart!=""?dateToStringDB(dateStart):"",
+        dateend: dateEnd!=""?dateToStringDB(dateEnd):"", };
     useEffect(() => {
         if (preValue) {
             router.get(
@@ -65,10 +85,55 @@ export default function Pengembalian(props) {
                         <div className="flex justify-between">
 
                             <div className="flex items-end">
-                                <SearchInput
-                                    onChange={(e) => setSearch(e.target.value)}
-                                    value={search}
-                                />
+                            <div className="flex -mx-2">
+                                    <div className="w-1/2 px-2 py-6">
+                                        <SearchInput
+                                            onChange={(e) =>
+                                                setSearch(e.target.value)
+                                            }
+                                            value={search}
+                                        />
+                                    </div>
+                                    <div className="w-1/3 px-2">
+                                        <FormInputDate
+                                            name="dateStart"
+                                            selected={dateStart}
+                                            onChange={(date) =>
+                                                setDateStart(date)
+                                            }
+                                            label="Tanggal Mulai"
+                                            // error={dateStart}
+                                        />
+                                    </div>
+                                    <div className="w-1/3 px-2">
+                                        <FormInputDate
+                                            name="dateEnd"
+                                            selected={dateEnd}
+                                            value={dateEnd}
+                                            onChange={(date) =>
+                                                setDateEnd(date)
+                                            }
+                                            label="Tanggal Akhir"
+                                            // error={dateStart}
+                                        />
+                                    </div>
+                                    <div className="w-1/3 px-2 mt-6">
+                                        <Button onClick={searchDate}>
+                                            Cari
+                                        </Button>
+                                    </div>
+                                    <div className="w-1/3 mt-6 py-2">
+                                    <a
+                                                    href={route(
+                                                        'pengembalian.export',paramsdate,
+                                                    )}
+                                                    target="_blank"
+                                                    className="text-white cursor-pointer bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
+                                                >
+                                                    Export Pdf
+                                                </a>
+                                    </div>
+                                </div>
                             </div>
                         </div>
                         <div className="overflow-auto">
@@ -92,13 +157,13 @@ export default function Pengembalian(props) {
                                                 scope="col"
                                                 className="py-3 px-6"
                                             >
-                                                Kode Ruangan
+                                                Ruangan
                                             </th>
                                             <th
                                                 scope="col"
                                                 className="py-3 px-6"
                                             >
-                                                Kode Petugas
+                                                Petugas Pengembali
                                             </th>
                                             <th
                                                 scope="col"
@@ -150,6 +215,8 @@ export default function Pengembalian(props) {
                                                     {peminjam?.tgl_pinjam}
                                                 </td>
                                                 <td className="py-4 px-6 flex justify-end">
+                                                { peminjam.tanggal_kembali==null&&(
+
                                                     <Dropdown
                                                         label={"Opsi"}
                                                         floatingArrow={true}
@@ -175,6 +242,8 @@ export default function Pengembalian(props) {
                                                         )}
 
                                                     </Dropdown>
+                                                )}
+                                                    
                                                 </td>
                                                 </tr>
                                             )

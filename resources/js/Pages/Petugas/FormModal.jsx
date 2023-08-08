@@ -68,7 +68,7 @@ export default function FormModal(props) {
                 name="kode_petugas"
                 value={data.kode_petugas}
                 onChange={handleOnChange}
-                label="Kode petugasan"
+                label="Kode petugas"
                 error={errors.kode_petugas}
             />
             <FormInput
@@ -79,7 +79,7 @@ export default function FormModal(props) {
                 error={errors.nama}
             />
             <SelectInputRuang
-                 label="Ruang"
+                 label="Ruangan"
                  itemSelected={data.kode_ruang}
                  onItemSelected={(id) => setData('kode_ruang', id)}
                  error={errors.kode_ruang}

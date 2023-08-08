@@ -97,7 +97,7 @@ export default function Index(props) {
                                                 scope="col"
                                                 className="py-3 px-6"
                                             >
-                                                NO RM
+                                                No. RM
                                             </th>
                                             <th
                                                 scope="col"
@@ -109,13 +109,13 @@ export default function Index(props) {
                                                 scope="col"
                                                 className="py-3 px-6"
                                             >
-                                                Alamat
+                                                Tempat Lahir
                                             </th>
                                             <th
                                                 scope="col"
                                                 className="py-3 px-6"
                                             >
-                                                NO Telephone
+                                                Tanggal Lahir
                                             </th>
                                             <th
                                                 scope="col"
@@ -127,12 +127,21 @@ export default function Index(props) {
                                                 scope="col"
                                                 className="py-3 px-6"
                                             >
-                                                Tanggal Lahir
+                                                Alamat
                                             </th>
                                             <th
                                                 scope="col"
                                                 className="py-3 px-6"
-                                            />
+                                            >
+                                                No Telephone
+                                            </th>
+                                            <th
+                                                scope="col"
+                                                className="py-3 px-6"
+                                            >
+
+                                            </th>
+
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -157,13 +166,13 @@ export default function Index(props) {
                                                     scope="row"
                                                     className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                                                 >
-                                                    {pasien.alamat}
+                                                    {pasien.tempat_lahir}
                                                 </td>
                                                 <td
                                                     scope="row"
                                                     className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                                                 >
-                                                    {pasien.phone}
+                                                    {pasien.tgl_lahir}
                                                 </td>
                                                 <td
                                                     scope="row"
@@ -175,8 +184,15 @@ export default function Index(props) {
                                                     scope="row"
                                                     className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
                                                 >
-                                                    {pasien.tgl_lahir}
+                                                    {pasien.alamat}
                                                 </td>
+                                                <td
+                                                    scope="row"
+                                                    className="py-4 px-6 font-medium text-gray-900 whitespace-nowrap dark:text-white"
+                                                >
+                                                    {pasien.phone}
+                                                </td>
+
                                                 <td className="py-4 px-6 flex justify-end">
                                                     <Dropdown
                                                         label={"Opsi"}

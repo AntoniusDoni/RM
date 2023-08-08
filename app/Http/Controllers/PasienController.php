@@ -30,19 +30,21 @@ class PasienController extends Controller
         $request->validate([
             'norm' => 'required|string|unique:pasiens,no_rm',
             'nama' => 'required|string|max:255',
+            'tempat_lahir'=>'required|string|max:255',
+            'tgl_lahir'=> 'required|date',
+            'jk'=> 'required|string|max:255',
             'alamat'=> 'required|string|max:255',
             'phone'=> 'required|string|max:12',
-            'jk'=> 'required|string|max:255',
-            'tgl_lahir'=> 'required|date',
         ]);
 
         Pasien::create([
             'no_rm' => $request->norm,
             'nama' => $request->nama,
+            'tgl_lahir'=> date('Y-m-d', strtotime($request->tgl_lahir)),
+            'tempat_lahir'=>$request->tempat_lahir,
             'alamat'=>$request->alamat,
             'phone'=> $request->phone,
             'jk'=>$request->jk,
-            'tgl_lahir'=> date('Y-m-d', strtotime($request->tgl_lahir)),
         ]);
 
         return redirect()->route('pasien.index')
@@ -54,19 +56,21 @@ class PasienController extends Controller
         $request->validate([
             'norm' => 'required|string|unique:pasiens,no_rm,'.$pasien->id,
             'nama' => 'required|string|max:255',
+            'tempat_lahir'=>'required|string|max:255',
+            'tgl_lahir'=> 'required|date',
+            'jk'=> 'required|string|max:255',
             'alamat'=> 'required|string|max:255',
             'phone'=> 'required|string|max:12',
-            'jk'=> 'required|string|max:255',
-            'tgl_lahir'=> 'required|date',
         ]);
 
         $pasien->fill([
             'no_rm' => $request->norm,
             'nama' => $request->nama,
+            'tgl_lahir'=> date('Y-m-d', strtotime($request->tgl_lahir)),
+            'tempat_lahir'=>$request->tempat_lahir,
             'alamat'=>$request->alamat,
             'phone'=> $request->phone,
             'jk'=>$request->jk,
-            'tgl_lahir'=> date('Y-m-d', strtotime($request->tgl_lahir)),
         ]);
 
 

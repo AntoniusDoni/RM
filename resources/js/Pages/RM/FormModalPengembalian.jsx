@@ -74,7 +74,7 @@ export default function FormModalPeminjaman(props) {
         <Modal
             isOpen={modalState.isOpen}
             toggle={handleClose}
-            title={"Pemijaman"}
+            title={"Pengembalian"}
         >
             <SelectInputPasien
                 label="No RM Pasien"
@@ -89,6 +89,13 @@ export default function FormModalPeminjaman(props) {
                 onItemSelected={(id) => setData("kode_ruang", id)}
                 error={errors.kode_ruang}
             />
+            <FormInput
+                name="tgl_pinjam"
+                value={data.tgl_pinjam}
+                disabled={true}
+                label="Tanggal Pinjam"
+                error={errors.tgl_pinjam}
+            />
             <SelectInputPetugas
                 label="Petugas Pengembali"
                 itemSelected={data.kode_peminjaman}
@@ -96,13 +103,6 @@ export default function FormModalPeminjaman(props) {
                 error={errors.kode_peminjaman}
                 disabled={data.kode_ruang==null?true:false}
                 kode_ruang={data.kode_ruang}
-            />
-            <FormInput
-                name="nama"
-                value={data.tgl_pinjam}
-                disabled={true}
-                label="Nama"
-                error={errors.tgl_pinjam}
             />
             <FormInputDate
             name="tgl_kembali"

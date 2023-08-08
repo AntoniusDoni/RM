@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Peminjaman;
 use Barryvdh\DomPDF\Facade\Pdf as PDF;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use function PHPUnit\Framework\isEmpty;
 
@@ -42,11 +43,24 @@ class PeminjamanController extends Controller
     }
     public function pengembalian(Request $request)
     {
-        $query = Peminjaman::query()->with(['pasien', 'petugasPinjam', 'petugasPinjam.ruang'])
-            ->whereNotNull('tgl_pinjam')->whereNull('tanggal_kembali')->orderBy('tgl_pinjam', 'DESC');
-        return inertia('RM/Pengembalian', [
-            'query' => $query->paginate(10),
-        ]);
+        $query = Peminjaman::query()->with(['pasien', 'petugasPinjam', 'petugasPinjam.ruang','petugasKembali','petugasKembali.ruang']);
+            if ($request->datestart && $request->dateend) {
+                $query->whereBetween('tanggal_kembali', [$request->datestart, $request->dateend])->orWhereBetween('tgl_pinjam', [$request->datestart, $request->dateend]);
+                if ($request->q) {
+                    $query->whereHas('pasien', function ($query) use ($request) {
+                        $query->where('nama', 'like', "%$request->q%")->orWhere('no_rm', '=', $request->q);
+                    });
+                }
+                return inertia('RM/Pengembalian', [
+                    'query' => $query->orderBy('tgl_pinjam', 'DESC')->paginate(10),
+                ]);
+            } else{
+                $query->whereNotNull('tgl_pinjam')->whereNull('tanggal_kembali')->orderBy('tgl_pinjam', 'DESC');
+                return inertia('RM/Pengembalian', [
+                    'query' => $query->paginate(10),
+                ]);
+            }
+
     }
     public function store(Request $request)
     {
@@ -126,17 +140,89 @@ class PeminjamanController extends Controller
                 $query->where('nama', 'like', "%{$request->q}%")->orWhere('kode_petugas', '=', $request->q);
             });
         }
-        dd($query->get());
-        $curdate = date('d M Y');
+
+        Carbon::setLocale('id');
+        $curdate = Carbon::now()->isoFormat('D MMMM Y');
+        // dd(auth()->guard()->user());
         $data = [
-            'title' => 'Laporan Berkas Rekam Medis ',
+            'title' => 'Laporan Peminjaman Berkas Rekam Medis ',
             'date' => $curdate,
-            'datas' => $query->get(),
+            'datas' => $query->orderBy('tgl_pinjam', 'DESC')->get(),
             'datestart'=>$request->datestart,
             'dateend'=>$request->dateend,
+            'creator'=>auth()?->guard()?->user()?->name
         ];
-        $pdf=PDF::loadView('myPDF',$data);
+        $pdf=PDF::loadView('PDFPeminjaman',$data);
 
         return $pdf->download('Laporan Peminjaman Berkas Rekam Medis per tanggal '.$curdate.'.pdf');
+
+    }
+    public function exportpdfpengembalian(Request $request)
+    {
+        $query = Peminjaman::query()->with(['pasien', 'petugasPinjam', 'petugasPinjam.ruang','petugasKembali','petugasKembali.ruang']);
+            if ($request->datestart && $request->dateend) {
+                $query->whereBetween('tanggal_kembali', [$request->datestart, $request->dateend]);
+                if ($request->q) {
+                    $query->whereHas('pasien', function ($query) use ($request) {
+                        $query->where('nama', 'like', "%$request->q%")->orWhere('no_rm', '=', $request->q);
+                    });
+                }
+
+            } else{
+                $query->whereNotNull('tgl_pinjam')->whereNotNull('tanggal_kembali');
+
+            }
+
+         Carbon::setLocale('id');
+        $curdate = Carbon::now()->isoFormat('D MMMM Y');
+        // dd($request->datestart);
+        $data = [
+            'title' => 'Laporan Pengembalian Berkas Rekam Medis ',
+            'date' => $curdate,
+            'datas' => $query->orderBy('tanggal_kembali', 'DESC')->get(),
+            'datestart'=>$request->datestart,
+            'dateend'=>$request->dateend,
+            'creator'=>auth()?->guard()?->user()?->name
+        ];
+        $pdf=PDF::loadView('PDFPengembalian',$data);
+
+        return $pdf->download('Laporan Pengembalian Berkas Rekam Medis per tanggal '.$curdate.'.pdf');
+
+    }
+
+
+
+    public function exportpdfhistory(Request $request)
+    {
+        $query = Peminjaman::query()->with(['pasien', 'petugasPinjam', 'petugasPinjam.ruang','petugasKembali','petugasKembali.ruang']);
+            if ($request->datestart && $request->dateend) {
+                $query->whereBetween('tanggal_kembali', [$request->datestart, $request->dateend]);
+                if ($request->q) {
+                    $query->whereHas('pasien', function ($query) use ($request) {
+                        $query->where('nama', 'like', "%$request->q%")->orWhere('no_rm', '=', $request->q);
+                    });
+                }
+
+            } else{
+                $query->whereNotNull('tgl_pinjam')->whereNotNull('tanggal_kembali');
+
+            }
+
+           Carbon::setLocale('id');
+        $curdate = Carbon::now()->isoFormat('D MMMM Y');
+        // dd($request->datestart);
+        $data = [
+            'title' => 'Laporan Riwayat Berkas Rekam Medis ',
+            'date' => $curdate,
+            'datas' => $query->orderBy('tgl_pinjam', 'DESC')->get(),
+            'datestart'=>$request->datestart,
+            'dateend'=>$request->dateend,
+            'creator'=>auth()?->guard()?->user()?->name
+
+        ];
+        $pdf=PDF::loadView('PDFHistory',$data);
+
+        return $pdf->download('Laporan Riwayat Berkas Rekam Medis per tanggal '.$curdate.'.pdf');
+
     }
 }

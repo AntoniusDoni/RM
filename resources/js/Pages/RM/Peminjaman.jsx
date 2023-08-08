@@ -45,6 +45,9 @@ export default function Peminjaman(props) {
         }
     };
     const params = { q: search };
+    const paramsdate = { q: search , 
+        datestart:dateStart!=""?dateToStringDB(dateStart):"",
+        dateend: dateEnd!=""?dateToStringDB(dateEnd):"", };
     const searchDate = () => {
         router.get(
             route(route().current()),
@@ -141,7 +144,7 @@ export default function Peminjaman(props) {
                                     <div className="w-1/3 mt-6 py-2">
                                     <a
                                                     href={route(
-                                                        'peminjaman.export','q='+search+'&datestart='+dateStart+'&dateend='+dateEnd,
+                                                        'peminjaman.export',paramsdate,
                                                     )}
                                                     target="_blank"
                                                     className="text-white cursor-pointer bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 mr-2 mb-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
@@ -173,13 +176,13 @@ export default function Peminjaman(props) {
                                                 scope="col"
                                                 className="py-3 px-6"
                                             >
-                                                Kode Ruangan
+                                                Ruangan
                                             </th>
                                             <th
                                                 scope="col"
                                                 className="py-3 px-6"
                                             >
-                                                Kode peminjaman
+                                                Petugas Peminjam
                                             </th>
                                             <th
                                                 scope="col"

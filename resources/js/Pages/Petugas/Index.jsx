@@ -97,19 +97,19 @@ export default function Index(props) {
                                                 scope="col"
                                                 className="py-3 px-6"
                                             >
-                                                Kode petugasan
+                                                Kode petugas
                                             </th>
                                             <th
                                                 scope="col"
                                                 className="py-3 px-6"
                                             >
-                                                Nama petugasan
+                                                Nama petugas
                                             </th>
                                             <th
                                                 scope="col"
                                                 className="py-3 px-6"
                                             >
-                                                Kode Ruangan
+                                                Ruangan
                                             </th>
                                             <th
                                                 scope="col"

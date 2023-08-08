@@ -11,13 +11,14 @@ export default function FormModal(props) {
     const { modalState } = props;
     const { data, setData, post, put, processing, errors, reset, clearErrors } =
         useForm({
-            nama: "",
             norm: "",
-            alamat: "",
-            phone: "",
+            nama: "",
+            tempat_lahir: "",
+            tgl_lahir: "",
             jk: "Laki-Laki",
             alamat: "",
-            tgl_lahir: "",
+            phone: "",
+
         });
 
     const handleOnChange = (event) => {
@@ -59,20 +60,20 @@ export default function FormModal(props) {
         const pasien = modalState.data;
         if (isEmpty(pasien) === false) {
             setData({
-                nama: pasien.nama,
                 norm: pasien.no_rm,
-                alamat: pasien.alamat,
-                phone: pasien.phone,
+                nama: pasien.nama,
+                tempat_lahir:pasien.tempat_lahir,
+                tgl_lahir: pasien.tgl_lahir,
                 jk: pasien.jk,
                 alamat: pasien.alamat,
-                tgl_lahir: pasien.tgl_lahir,
+                phone: pasien.phone,
             });
             return;
         }
     }, [modalState]);
 
     return (
-        <Modal isOpen={modalState.isOpen} toggle={handleClose} title={"pasien"}>
+        <Modal isOpen={modalState.isOpen} toggle={handleClose} title={"Pasien"}>
             <FormInput
                 name="norm"
                 value={data.norm}
@@ -88,18 +89,18 @@ export default function FormModal(props) {
                 error={errors.nama}
             />
             <FormInput
-                name="alamat"
-                value={data.alamat}
+                name="tempat_lahir"
+                selected={data.tempat_lahir}
                 onChange={handleOnChange}
-                label="Alamat"
-                error={errors.alamat}
+                label="Tempat Lahir"
+                error={errors.tempat_lahir}
             />
-            <FormInput
-                name="phone"
-                value={data.phone}
-                onChange={handleOnChange}
-                label="No elephone"
-                error={errors.phone}
+            <FormInputDate
+                name="tgl_lahir"
+                selected={data.tgl_lahir}
+                onChange={(date) => setData("tgl_lahir", date)}
+                label="Tanggal Lahir"
+                error={errors.tgl_lahir}
             />
              <div className="flex-auto px-2">
                                 <label className="block mb-2 text-sm font-medium text-gray-900 dark:text-white">
@@ -107,7 +108,7 @@ export default function FormModal(props) {
                                 </label>
                                 <select
                                     className="mb-2 bg-gray-50 border  text-gray-900 text-sm rounded-lg block w-full p-2.5 dark:bg-gray-700 dark:placeholder-gray-400 dark:text-white"
-                                    name="detail_month"
+                                    name="jk"
                                     onChange={handleOnChange}
                                     value={data.jk}
                                 >
@@ -123,13 +124,22 @@ export default function FormModal(props) {
                                     </p>
                                 )}
                             </div>
-            <FormInputDate
-                name="tgl_lahir"
-                selected={data.tgl_lahir}
-                onChange={(date) => setData("tgl_lahir", date)}
-                label="Tanggal Lahir"
-                error={errors.tgl_lahir}
+            <FormInput
+                name="alamat"
+                value={data.alamat}
+                onChange={handleOnChange}
+                label="Alamat"
+                error={errors.alamat}
             />
+            <FormInput
+                name="phone"
+                value={data.phone}
+                onChange={handleOnChange}
+                label="No Telephone"
+                error={errors.phone}
+            />
+
+
 
             <div className="flex items-center">
                 <Button onClick={handleSubmit} processing={processing}>

@@ -62,8 +62,10 @@ Route::middleware(['auth'])->group(function () {
     //Pengembalian
     Route::get('/pengembalian', [PeminjamanController::class, 'pengembalian'])->name('pengembalian.index');
     Route::put('/pengembalian/{peminjam}', [PeminjamanController::class, 'pengembalianberkas'])->name('pengembalian.update');
+    Route::get('/pengembalian/exports', [PeminjamanController::class, 'exportpdfpengembalian'])->name('pengembalian.export');
     //Riwayat
     Route::get('/riwayat', [PeminjamanController::class, 'history'])->name('riwayat.index');
+    Route::get('/riwayat/exports', [PeminjamanController::class, 'exportpdfhistory'])->name('history.export');
 });
 
 Route::middleware('auth')->group(function () {
